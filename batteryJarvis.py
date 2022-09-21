@@ -1,9 +1,6 @@
 #!/usr/bin/env python3
 
-import os,time
-import subprocess
-import getpass
-
+import os
 from subprocess import call
 
 """
@@ -28,8 +25,7 @@ def get_file_content(path):
 # May contain BAT0 or BAT1 at end
 batterypath=get_battery_paths()[0]
 
-charge_now_content=get_file_content(batterypath + "/charge_now")
-charge_full_content=get_file_content(batterypath + "/charge_full")
+capacity_content=get_file_content(batterypath + "/capacity")
 charge_status_content=get_file_content(batterypath + "/status")
 
 """
@@ -43,24 +39,17 @@ charge_status_content=get_file_content(batterypath + "/status")
   Then I took first element of list .
 """
 
+res = int(capacity_content)
+
 lines=charge_status_content.splitlines()
 
 charge_status_content=lines[0]
 
-num=int(charge_now_content)*1.0
-den=int(charge_full_content)*1.0
-
-res=num/den*100
-
-user=getpass.getuser()
-
-#user=user[:-4]
-
 if res<=15 and charge_status_content!="Charging":
-    speech ="Yaar " + user + " Charge karde mereko !"
-    call(["espeak",speech])
+    speech ="Yaar, please charge me"
+    call(["espeak",speech,"-s","160","-v","en-us+f3"])
 
 elif res==100 and charge_status_content!="Discharging":
-    speech ="Yaar " + user + ". Jyada charge ho gya re !!"
-    call(["espeak",speech])
+    speech ="Yaar, please unplug me"
+    call(["espeak",speech,"-s","160","-v","en-us+f4"])
 
